@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net461</TargetFramework>
+    <RootNamespace>Test.InformationManager.AddressBook.Modules.Domain</RootNamespace>
+    <AssemblyName>Waf.InformationManager.AddressBook.Modules.Domain.Test</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\System.Waf\System.Waf.Core\System.Waf.Core.csproj" />
+    <ProjectReference Include="..\..\..\System.Waf\System.Waf.UnitTesting.Core\System.Waf.UnitTesting.Core.csproj" />
+    <ProjectReference Include="..\AddressBook.Modules.Domain\AddressBook.Modules.Domain.csproj" />
+    <ProjectReference Include="..\Common.Domain.Test\Common.Domain.Test.csproj" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,24 @@
+﻿<UserControl x:Class="EAGLEMonitoring.Presentation.Views.StatusBarView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:conv="clr-namespace:EAGLEMonitoring.Presentation.Resources.Converters"
+             xmlns:local="clr-namespace:EAGLEMonitoring.Presentation.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="200" d:DesignWidth="1920">
+    <UserControl.Resources>
+        <conv:BoolToColorConverted x:Key="boolToColorConverter"/>
+    </UserControl.Resources>
+    <Grid>
+        <DockPanel VerticalAlignment="Center" >
+            <TextBox DockPanel.Dock="Left" Text="Flight Mode:" FontSize="25" Margin="5" VerticalContentAlignment="Center" BorderThickness="0" IsReadOnly="True"/>
+            <TextBox Text="{Binding FlightMode}" DockPanel.Dock="Left" FontSize="25" Margin="5" VerticalContentAlignment="Center" BorderThickness="0" IsReadOnly="True"/>
+            <TextBox Height="50" Width="120" Text="{Binding ConnectedText}" Background="{Binding Connected, Converter={StaticResource boolToColorConverter}}" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="18" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="10" IsReadOnly="True"/>
+            <StackPanel Orientation="Vertical" DockPanel.Dock="Right">
+                <Button Content="{Binding ConnectButtonText}"  HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="16" Height="30" Width="100" Margin="10" Command="{Binding DisconnectCommand}"/>
+                <Button Content="Save &amp; Reset" HorizontalAlignment="Right" VerticalAlignment="Center" Height="30" Width="100" Margin="10" Command="{Binding Reset}"/>
+            </StackPanel>
+        </DockPanel>
+    </Grid>
+</UserControl>
