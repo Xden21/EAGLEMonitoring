@@ -1,5 +1,6 @@
 ﻿using EAGLEMonitoring.Application.Services;
 using EAGLEMonitoring.Domain;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
@@ -15,6 +16,12 @@ namespace EAGLEMonitoring.Application.Controllers
     [Export]
     public class NetworkAccessThreadController
     {
+        #region NLog
+
+        private static Logger Logger = LogManager.GetCurrentClassLogger();
+
+        #endregion
+
         #region Constructor
 
         [ImportingConstructor]
@@ -63,6 +70,7 @@ namespace EAGLEMonitoring.Application.Controllers
                 {
                     Connect();
                 }
+                Logger.Info("Connected");
                 connecting = false;
             }
         }
@@ -87,6 +95,8 @@ namespace EAGLEMonitoring.Application.Controllers
             }
             catch (Exception ex)
             {
+                Logger.Error(ex, "Connecting Failed");
+                Thread.Sleep(200);
                 return false;
             }
 #else
@@ -167,13 +177,17 @@ namespace EAGLEMonitoring.Application.Controllers
                             dataFetchService.UnprocessedDataSets.Add(fetchedData);
                         }
                     }
-                    else
-                    {
-                        int i = 0;
-                    }
+                    Thread.Sleep(5);
                 }
                 catch (Exception ex)
                 {
+                    Logger.Error(ex, "Network Error");
+                    Thread.Sleep(5);
+                    if (connection != null && !connection.Connected)
+                    {
+                        if (!Connect())
+                            generalService.Connected = false;
+                    }
                     continue;
                 }
 #else
@@ -195,9 +209,9 @@ namespace EAGLEMonitoring.Application.Controllers
                     HeightEstimate = val,
                     HeightMeasured = val,
                     HeightReference = val,
-                    PositionEstimate = new Position { XPosition = val, YPosition = val },
-                    PositionMeasured =  new Position { XPosition = val, YPosition = val } ,
-                    PositionReference = new Position { XPosition = val, YPosition = val },
+                    PositionEstimate = new Position { XPosition = val/20, YPosition = val/40 },
+                    PositionMeasured =  new Position { XPosition = val/10, YPosition = -val/20 } ,
+                    PositionReference = new Position { XPosition = val/10, YPosition = val/20 },
                     VelocitySet = new VelocitySet { XVelocity=val,YVelocity=val}
                 };
                 lock (dataFetchService.DataLock)

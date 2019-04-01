@@ -15,10 +15,16 @@
       <Value Profile="(Default)">30</Value>
     </Setting>
     <Setting Name="FPS" Type="System.Int32" Scope="Application">
-      <Value Profile="(Default)">60</Value>
+      <Value Profile="(Default)">30</Value>
     </Setting>
     <Setting Name="LogSaveFolder" Type="System.String" Scope="Application">
       <Value Profile="(Default)">C:\Users\denni\Documents\School\2018-2019\P_O_Eagle\LogFiles</Value>
+    </Setting>
+    <Setting Name="BigPlotTimeFrame" Type="System.Single" Scope="Application">
+      <Value Profile="(Default)">120</Value>
+    </Setting>
+    <Setting Name="TrackingTimeFrame" Type="System.Single" Scope="Application">
+      <Value Profile="(Default)">2</Value>
     </Setting>
   </Settings>
 </SettingsFile>

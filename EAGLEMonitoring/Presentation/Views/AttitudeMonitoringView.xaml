@@ -7,248 +7,266 @@
              xmlns:conv="clr-namespace:EAGLEMonitoring.Presentation.Resources.Converters"
              xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
              xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+             xmlns:lvcG="clr-namespace:LiveCharts.Geared;assembly=LiveCharts.Geared"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
         <conv:OpacityConverter x:Key="OpacityConverter"/>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
     </UserControl.Resources>
     <Grid>
-        <TabControl TabStripPlacement="Left">
-            <TabItem Header="Roll">
-                <Border CornerRadius="8" BorderThickness="3" BorderBrush="#FFBBBBBB" Margin="10">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"></RowDefinition>
-                            <RowDefinition Height="*"></RowDefinition>
-                        </Grid.RowDefinitions>
-                        <TextBlock Grid.Row="0" FontSize="40" Foreground="#404040" Margin="20, 10">Attitude: Roll</TextBlock>
-                        <Canvas Grid.Row="1" Name="AttRollCanvas" Margin="3, 3, 3, 20">
-                            <ListBox ItemsSource="{Binding AttRollSeries}" 
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <StackPanel Orientation="Vertical" Grid.Column="0">
+            <Button Content="Orientations" Background="#FFF1F1F1" Command="{Binding TabChange}" CommandParameter="0"/>
+            <Button Content="Velocities" Background="#FFF1F1F1" Margin="0,-1,0,0" Command="{Binding TabChange}" CommandParameter="1"/>
+            <Button Content="Motors" Background="#FFF1F1F1" Margin="0,-1,0,0" Command="{Binding TabChange}" CommandParameter="2"/>
+        </StackPanel>
+        <Grid Grid.Column="1" Visibility="{Binding RotVis, Converter={StaticResource BoolToVisibilityConverter}}">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Border CornerRadius="8" BorderThickness="3" BorderBrush="#FFBBBBBB" Margin="10,2,10,2" Grid.Row="0">
+                <Grid>
+                    <TextBlock FontSize="30" Foreground="#404040" Margin="20, 10" Grid.ZIndex="1" HorizontalAlignment="Center">Attitude: Roll</TextBlock>
+                    <Canvas Name="AttRollCanvas" Margin="3, 3, 3, 20">
+                        <ListBox ItemsSource="{Binding Series, ElementName=AttRoll}" 
                              Panel.ZIndex="1" Canvas.Left="60" Canvas.Top="20" BorderThickness="0" Background="Transparent" PreviewMouseDown="ListBox_PreviewMouseDown">
-                                <ListBox.ItemTemplate>
-                                    <DataTemplate>
-
-                                        <TextBlock Text="{Binding (lvc:LineSeries.Title)}" 
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding (lvc:LineSeries.Title)}" 
                                            Foreground="{Binding (lvc:LineSeries.Stroke)}"
                                            Opacity="{Binding (lvc:LineSeries.Visibility), Converter={StaticResource OpacityConverter}}"
                                            FontSize="18"/>
-                                    </DataTemplate>
-                                </ListBox.ItemTemplate>
-                                <ListBox.ItemContainerStyle>
-                                    <Style TargetType="{x:Type ListBoxItem}">
-                                        <Setter Property="Background" Value="Transparent"/>
-                                        <Setter Property="Template">
-                                            <Setter.Value>
-                                                <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                                                    <ContentPresenter />
-                                                </ControlTemplate>
-                                            </Setter.Value>
-                                        </Setter>
-                                    </Style>
-                                </ListBox.ItemContainerStyle>
-                            </ListBox>
-                            <lvc:CartesianChart Height="{Binding ElementName=AttRollCanvas, Path=ActualHeight}" Width="{Binding ElementName=AttRollCanvas, Path=ActualWidth}"
-                                     Series="{Binding AttRollSeries}" Hoverable="False" DataTooltip="{x:Null}"
-                                            AnimationsSpeed="0:0:0.01" LegendLocation="None" Canvas.Top="5" Zoom="X" PreviewMouseDoubleClick="CartesianChart_PreviewMouseDoubleClick">
-                                <lvc:CartesianChart.AxisX>
-                                    <lvc:Axis FontSize="14" LabelFormatter="{Binding Formatter}"/>
-                                </lvc:CartesianChart.AxisX>
-                                <lvc:CartesianChart.AxisY>
-                                    <lvc:Axis FontSize="14" LabelFormatter="{Binding Formatter}"/>
-                                </lvc:CartesianChart.AxisY>
-                            </lvc:CartesianChart>
-                        </Canvas>
-                    </Grid>
-                </Border>
-            </TabItem>
-            <TabItem Header="Pitch">
-                <Border CornerRadius="8" BorderThickness="3" BorderBrush="#FFBBBBBB" Margin="10">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"></RowDefinition>
-                            <RowDefinition Height="*"></RowDefinition>
-                        </Grid.RowDefinitions>
-                        <TextBlock Grid.Row="0" FontSize="40" Foreground="#404040" Margin="20, 10">Attitude: Pitch</TextBlock>
-                        <Canvas Grid.Row="1" Name="AttPitchCanvas" Margin="3, 3, 3, 20">
-                            <ListBox ItemsSource="{Binding AttPitchSeries}" 
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                            <ListBox.ItemContainerStyle>
+                                <Style TargetType="{x:Type ListBoxItem}">
+                                    <Setter Property="Background" Value="Transparent"/>
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                                                <ContentPresenter />
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </ListBox.ItemContainerStyle>
+                        </ListBox>
+                        <lvc:CartesianChart Height="{Binding ElementName=AttRollCanvas, Path=ActualHeight}" Width="{Binding ElementName=AttRollCanvas, Path=ActualWidth}"
+                                     Hoverable="False" DataTooltip="{x:Null}" x:Name="AttRoll"
+                                            DisableAnimations="True" LegendLocation="None" Canvas.Top="5" PreviewMouseDoubleClick="CartesianChart_PreviewMouseDoubleClick">
+                            <lvc:CartesianChart.Series>
+                                <lvcG:GLineSeries Title = "Roll Estimate" LineSmoothness = "0" Fill ="Transparent" Values ="{Binding RollEstPoints}"  PointGeometry = "{x:Null}"/>
+                                <lvcG:GLineSeries Title = "Roll Measured" LineSmoothness = "0" Fill ="Transparent" Values ="{Binding RollMeasPoints}"  PointGeometry = "{x:Null}"/>
+                                <lvcG:GLineSeries Title = "Roll Reference" LineSmoothness = "0" Fill ="Transparent" Values ="{Binding RollRefPoints}"  PointGeometry = "{x:Null}"/>
+                            </lvc:CartesianChart.Series>
+                            <lvc:CartesianChart.AxisX>
+                                <lvc:Axis FontSize="14" LabelFormatter="{Binding Formatter}"/>
+                            </lvc:CartesianChart.AxisX>
+                            <lvc:CartesianChart.AxisY>
+                                <lvc:Axis FontSize="14" LabelFormatter="{Binding Formatter}" MinValue="-25" MaxValue="25"/>
+                            </lvc:CartesianChart.AxisY>
+                        </lvc:CartesianChart>
+                    </Canvas>
+                </Grid>
+            </Border>
+            <Border CornerRadius="8" BorderThickness="3" BorderBrush="#FFBBBBBB" Margin="10,2,10,2"  Grid.Row="1">
+                <Grid>
+                    <TextBlock FontSize="30" Foreground="#404040" Margin="20, 10" Grid.ZIndex="1" HorizontalAlignment="Center">Attitude: Pitch</TextBlock>
+                    <Canvas Name="AttPitchCanvas" Margin="3, 3, 3, 20">
+                        <ListBox ItemsSource="{Binding Series, ElementName=AttPitch}" 
                              Panel.ZIndex="1" Canvas.Left="60" Canvas.Top="20" BorderThickness="0" Background="Transparent" PreviewMouseDown="ListBox_PreviewMouseDown">
-                                <ListBox.ItemTemplate>
-                                    <DataTemplate>
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
 
-                                        <TextBlock Text="{Binding (lvc:LineSeries.Title)}" 
+                                    <TextBlock Text="{Binding (lvc:LineSeries.Title)}" 
                                            Foreground="{Binding (lvc:LineSeries.Stroke)}"
                                            Opacity="{Binding (lvc:LineSeries.Visibility), Converter={StaticResource OpacityConverter}}"
                                            FontSize="18"/>
-                                    </DataTemplate>
-                                </ListBox.ItemTemplate>
-                                <ListBox.ItemContainerStyle>
-                                    <Style TargetType="{x:Type ListBoxItem}">
-                                        <Setter Property="Background" Value="Transparent"/>
-                                        <Setter Property="Template">
-                                            <Setter.Value>
-                                                <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                                                    <ContentPresenter />
-                                                </ControlTemplate>
-                                            </Setter.Value>
-                                        </Setter>
-                                    </Style>
-                                </ListBox.ItemContainerStyle>
-                            </ListBox>
-                            <lvc:CartesianChart Height="{Binding ElementName=AttPitchCanvas, Path=ActualHeight}" Width="{Binding ElementName=AttPitchCanvas, Path=ActualWidth}"
-                                     Series="{Binding AttPitchSeries}" Hoverable="False" DataTooltip="{x:Null}"
-                                            AnimationsSpeed="0:0:0.01" LegendLocation="None" Canvas.Top="5" Zoom="X" PreviewMouseDoubleClick="CartesianChart_PreviewMouseDoubleClick">
-                                <lvc:CartesianChart.AxisX>
-                                    <lvc:Axis FontSize="14" LabelFormatter="{Binding Formatter}"/>
-                                </lvc:CartesianChart.AxisX>
-                                <lvc:CartesianChart.AxisY>
-                                    <lvc:Axis FontSize="14" LabelFormatter="{Binding Formatter}"/>
-                                </lvc:CartesianChart.AxisY>
-                            </lvc:CartesianChart>
-                        </Canvas>
-                    </Grid>
-                </Border>
-            </TabItem>
-            <TabItem Header="Yaw">
-                <Border CornerRadius="8" BorderThickness="3" BorderBrush="#FFBBBBBB" Margin="10">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"></RowDefinition>
-                            <RowDefinition Height="*"></RowDefinition>
-                        </Grid.RowDefinitions>
-                        <TextBlock Grid.Row="0" FontSize="40" Foreground="#404040" Margin="20, 10">Attitude: Yaw</TextBlock>
-                        <Canvas Grid.Row="1" Name="AttYawCanvas" Margin="3, 3, 3, 20">
-                            <ListBox ItemsSource="{Binding AttYawSeries}" 
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                            <ListBox.ItemContainerStyle>
+                                <Style TargetType="{x:Type ListBoxItem}">
+                                    <Setter Property="Background" Value="Transparent"/>
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                                                <ContentPresenter />
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </ListBox.ItemContainerStyle>
+                        </ListBox>
+                        <lvc:CartesianChart Height="{Binding ElementName=AttPitchCanvas, Path=ActualHeight}" Width="{Binding ElementName=AttPitchCanvas, Path=ActualWidth}"
+                                     Hoverable="False" DataTooltip="{x:Null}" x:Name="AttPitch"
+                                            DisableAnimations="True" LegendLocation="None" Canvas.Top="5" PreviewMouseDoubleClick="CartesianChart_PreviewMouseDoubleClick">
+                            <lvc:CartesianChart.Series>
+                                <lvcG:GLineSeries Title = "Pitch Estimate" LineSmoothness = "0" Fill ="Transparent" Values ="{Binding PitchEstPoints}"  PointGeometry = "{x:Null}"/>
+                                <lvcG:GLineSeries Title = "Pitch Measured" LineSmoothness = "0" Fill ="Transparent" Values ="{Binding PitchMeasPoints}"  PointGeometry = "{x:Null}"/>
+                                <lvcG:GLineSeries Title = "Pitch Reference" LineSmoothness = "0" Fill ="Transparent" Values ="{Binding PitchRefPoints}"  PointGeometry = "{x:Null}"/>
+                            </lvc:CartesianChart.Series>
+                            <lvc:CartesianChart.AxisX>
+                                <lvc:Axis FontSize="14" LabelFormatter="{Binding Formatter}"/>
+                            </lvc:CartesianChart.AxisX>
+                            <lvc:CartesianChart.AxisY>
+                                <lvc:Axis FontSize="14" LabelFormatter="{Binding Formatter}" MinValue="-25" MaxValue="25"/>
+                            </lvc:CartesianChart.AxisY>
+                        </lvc:CartesianChart>
+                    </Canvas>
+                </Grid>
+            </Border>
+            <Border CornerRadius="8" BorderThickness="3" BorderBrush="#FFBBBBBB" Margin="10"  Grid.Row="2">
+                <Grid>
+                    <TextBlock Grid.Row="0" FontSize="30" Foreground="#404040" Margin="20, 10" Grid.ZIndex="1" HorizontalAlignment="Center">Attitude: Yaw</TextBlock>
+                    <Canvas Grid.Row="1" Name="AttYawCanvas" Margin="3, 3, 3, 20">
+                        <ListBox ItemsSource="{Binding Series, ElementName=AttYaw}" 
                              Panel.ZIndex="1" Canvas.Left="60" Canvas.Top="20" BorderThickness="0" Background="Transparent" PreviewMouseDown="ListBox_PreviewMouseDown">
-                                <ListBox.ItemTemplate>
-                                    <DataTemplate>
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
 
-                                        <TextBlock Text="{Binding (lvc:LineSeries.Title)}" 
+                                    <TextBlock Text="{Binding (lvc:LineSeries.Title)}" 
                                            Foreground="{Binding (lvc:LineSeries.Stroke)}"
                                            Opacity="{Binding (lvc:LineSeries.Visibility), Converter={StaticResource OpacityConverter}}"
                                            FontSize="18"/>
-                                    </DataTemplate>
-                                </ListBox.ItemTemplate>
-                                <ListBox.ItemContainerStyle>
-                                    <Style TargetType="{x:Type ListBoxItem}">
-                                        <Setter Property="Background" Value="Transparent"/>
-                                        <Setter Property="Template">
-                                            <Setter.Value>
-                                                <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                                                    <ContentPresenter />
-                                                </ControlTemplate>
-                                            </Setter.Value>
-                                        </Setter>
-                                    </Style>
-                                </ListBox.ItemContainerStyle>
-                            </ListBox>
-                            <lvc:CartesianChart Height="{Binding ElementName=AttYawCanvas, Path=ActualHeight}" Width="{Binding ElementName=AttYawCanvas, Path=ActualWidth}"
-                                     Series="{Binding AttYawSeries}" Hoverable="False" DataTooltip="{x:Null}"
-                                            AnimationsSpeed="0:0:0.01" LegendLocation="None" Canvas.Top="5" Zoom="X" PreviewMouseDoubleClick="CartesianChart_PreviewMouseDoubleClick">
-                                <lvc:CartesianChart.AxisX>
-                                    <lvc:Axis FontSize="14" LabelFormatter="{Binding Formatter}"/>
-                                </lvc:CartesianChart.AxisX>
-                                <lvc:CartesianChart.AxisY>
-                                    <lvc:Axis FontSize="14" LabelFormatter="{Binding Formatter}"/>
-                                </lvc:CartesianChart.AxisY>
-                            </lvc:CartesianChart>
-                        </Canvas>
-                    </Grid>
-                </Border>
-            </TabItem>
-            <TabItem Header="Velocity">
-                <Border CornerRadius="8" BorderThickness="3" BorderBrush="#FFBBBBBB" Margin="10">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"></RowDefinition>
-                            <RowDefinition Height="*"></RowDefinition>
-                        </Grid.RowDefinitions>
-                        <TextBlock Grid.Row="0" FontSize="40" Foreground="#404040" Margin="20, 10">Attitude: Velocity</TextBlock>
-                        <Canvas Grid.Row="1" Name="AttVelCanvas" Margin="3, 3, 3, 20">
-                            <ListBox ItemsSource="{Binding AttVelSeries}" 
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                            <ListBox.ItemContainerStyle>
+                                <Style TargetType="{x:Type ListBoxItem}">
+                                    <Setter Property="Background" Value="Transparent"/>
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                                                <ContentPresenter />
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </ListBox.ItemContainerStyle>
+                        </ListBox>
+                        <lvc:CartesianChart Height="{Binding ElementName=AttYawCanvas, Path=ActualHeight}" Width="{Binding ElementName=AttYawCanvas, Path=ActualWidth}"
+                                     Hoverable="False" DataTooltip="{x:Null}" x:Name="AttYaw"
+                                            DisableAnimations="True" LegendLocation="None" Canvas.Top="5" PreviewMouseDoubleClick="CartesianChart_PreviewMouseDoubleClick">
+                            <lvc:CartesianChart.Series>
+                                <lvcG:GLineSeries Title = "Yaw Estimate" LineSmoothness = "0" Fill ="Transparent" Values ="{Binding YawEstPoints}"  PointGeometry = "{x:Null}"/>
+                                <lvcG:GLineSeries Title = "Yaw Measured" LineSmoothness = "0" Fill ="Transparent" Values ="{Binding YawMeasPoints}"  PointGeometry = "{x:Null}"/>
+                                <lvcG:GLineSeries Title = "Yaw Reference" LineSmoothness = "0" Fill ="Transparent" Values ="{Binding YawRefPoints}"  PointGeometry = "{x:Null}"/>
+                            </lvc:CartesianChart.Series>
+                            <lvc:CartesianChart.AxisX>
+                                <lvc:Axis FontSize="14" LabelFormatter="{Binding Formatter}"/>
+                            </lvc:CartesianChart.AxisX>
+                            <lvc:CartesianChart.AxisY>
+                                <lvc:Axis FontSize="14" LabelFormatter="{Binding Formatter}" MinValue="-45" MaxValue="45"/>
+                            </lvc:CartesianChart.AxisY>
+                        </lvc:CartesianChart>
+                    </Canvas>
+                </Grid>
+            </Border>
+        </Grid>
+        <Border CornerRadius="8" BorderThickness="3" BorderBrush="#FFBBBBBB" Margin="10"  Grid.Column="1" Grid.ZIndex="4" Visibility="{Binding VelVis, Converter={StaticResource BoolToVisibilityConverter}}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="*"></RowDefinition>
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0" FontSize="40" Foreground="#404040" Margin="20, 10">Attitude: Velocity</TextBlock>
+                <Canvas Grid.Row="1" Name="AttVelCanvas" Margin="3, 3, 3, 20">
+                    <ListBox ItemsSource="{Binding Series, ElementName=AttVel}" 
                              Panel.ZIndex="1" Canvas.Left="60" Canvas.Top="20" BorderThickness="0" Background="Transparent" PreviewMouseDown="ListBox_PreviewMouseDown">
-                                <ListBox.ItemTemplate>
-                                    <DataTemplate>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
 
-                                        <TextBlock Text="{Binding (lvc:LineSeries.Title)}" 
+                                <TextBlock Text="{Binding (lvc:LineSeries.Title)}" 
                                            Foreground="{Binding (lvc:LineSeries.Stroke)}"
                                            Opacity="{Binding (lvc:LineSeries.Visibility), Converter={StaticResource OpacityConverter}}"
                                            FontSize="18"/>
-                                    </DataTemplate>
-                                </ListBox.ItemTemplate>
-                                <ListBox.ItemContainerStyle>
-                                    <Style TargetType="{x:Type ListBoxItem}">
-                                        <Setter Property="Background" Value="Transparent"/>
-                                        <Setter Property="Template">
-                                            <Setter.Value>
-                                                <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                                                    <ContentPresenter />
-                                                </ControlTemplate>
-                                            </Setter.Value>
-                                        </Setter>
-                                    </Style>
-                                </ListBox.ItemContainerStyle>
-                            </ListBox>
-                            <lvc:CartesianChart Height="{Binding ElementName=AttVelCanvas, Path=ActualHeight}" Width="{Binding ElementName=AttVelCanvas, Path=ActualWidth}"
-                                     Series="{Binding AttVelSeries}" Hoverable="False" DataTooltip="{x:Null}"
-                                            AnimationsSpeed="0:0:0.01" LegendLocation="None" Canvas.Top="5" Zoom="X" PreviewMouseDoubleClick="CartesianChart_PreviewMouseDoubleClick">
-                                <lvc:CartesianChart.AxisX>
-                                    <lvc:Axis FontSize="14" LabelFormatter="{Binding Formatter}"/>
-                                </lvc:CartesianChart.AxisX>
-                                <lvc:CartesianChart.AxisY>
-                                    <lvc:Axis FontSize="14" LabelFormatter="{Binding Formatter}"/>
-                                </lvc:CartesianChart.AxisY>
-                            </lvc:CartesianChart>
-                        </Canvas>
-                    </Grid>
-                </Border>
-            </TabItem>
-            <TabItem Header="Motors">
-                <Border CornerRadius="8" BorderThickness="3" BorderBrush="#FFBBBBBB" Margin="10">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"></RowDefinition>
-                            <RowDefinition Height="*"></RowDefinition>
-                        </Grid.RowDefinitions>
-                        <TextBlock Grid.Row="0" FontSize="40" Foreground="#404040" Margin="20, 10">Attitude: Motors</TextBlock>
-                        <Canvas Grid.Row="1" Name="AttMotorsCanvas" Margin="3, 3, 3, 20">
-                            <ListBox ItemsSource="{Binding AttMotorsSeries}" 
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="{x:Type ListBoxItem}">
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                                            <ContentPresenter />
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </ListBox.ItemContainerStyle>
+                    </ListBox>
+                    <lvc:CartesianChart Height="{Binding ElementName=AttVelCanvas, Path=ActualHeight}" Width="{Binding ElementName=AttVelCanvas, Path=ActualWidth}"
+                                     Hoverable="False" DataTooltip="{x:Null}" x:Name="AttVel"
+                                           DisableAnimations="True" LegendLocation="None" Canvas.Top="5" PreviewMouseDoubleClick="CartesianChart_PreviewMouseDoubleClick">
+                        <lvc:CartesianChart.Series>
+                            <lvcG:GLineSeries Title = "Velocity X-axis" LineSmoothness = "0" Fill ="Transparent" Values ="{Binding VelXPoints}"  PointGeometry = "{x:Null}"/>
+                            <lvcG:GLineSeries Title = "Velocity Y-axis" LineSmoothness = "0" Fill ="Transparent" Values ="{Binding VelYPoints}"  PointGeometry = "{x:Null}"/>
+                            <lvcG:GLineSeries Title = "Velocity Z-axis" LineSmoothness = "0" Fill ="Transparent" Values ="{Binding VelZPoints}"  PointGeometry = "{x:Null}"/>
+                        </lvc:CartesianChart.Series>
+                        <lvc:CartesianChart.AxisX>
+                            <lvc:Axis FontSize="14" LabelFormatter="{Binding Formatter}"/>
+                        </lvc:CartesianChart.AxisX>
+                        <lvc:CartesianChart.AxisY>
+                            <lvc:Axis FontSize="14" LabelFormatter="{Binding Formatter}"/>
+                        </lvc:CartesianChart.AxisY>
+                    </lvc:CartesianChart>
+                </Canvas>
+            </Grid>
+        </Border>
+        <Border CornerRadius="8" BorderThickness="3" BorderBrush="#FFBBBBBB" Margin="10"  Grid.Column="1" Grid.ZIndex="5" Visibility="{Binding MotorVis, Converter={StaticResource BoolToVisibilityConverter}}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="*"></RowDefinition>
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0" FontSize="40" Foreground="#404040" Margin="20, 10">Attitude: Motors</TextBlock>
+                <Canvas Grid.Row="1" Name="AttMotorsCanvas" Margin="3, 3, 3, 20">
+                    <ListBox ItemsSource="{Binding Series, ElementName=AttMotors}" 
                              Panel.ZIndex="1" Canvas.Left="60" Canvas.Top="20" BorderThickness="0" Background="Transparent" PreviewMouseDown="ListBox_PreviewMouseDown">
-                                <ListBox.ItemTemplate>
-                                    <DataTemplate>
-
-                                        <TextBlock Text="{Binding (lvc:LineSeries.Title)}" 
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding (lvc:LineSeries.Title)}" 
                                            Foreground="{Binding (lvc:LineSeries.Stroke)}"
                                            Opacity="{Binding (lvc:LineSeries.Visibility), Converter={StaticResource OpacityConverter}}"
                                            FontSize="18"/>
-                                    </DataTemplate>
-                                </ListBox.ItemTemplate>
-                                <ListBox.ItemContainerStyle>
-                                    <Style TargetType="{x:Type ListBoxItem}">
-                                        <Setter Property="Background" Value="Transparent"/>
-                                        <Setter Property="Template">
-                                            <Setter.Value>
-                                                <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                                                    <ContentPresenter />
-                                                </ControlTemplate>
-                                            </Setter.Value>
-                                        </Setter>
-                                    </Style>
-                                </ListBox.ItemContainerStyle>
-                            </ListBox>
-                            <lvc:CartesianChart Height="{Binding ElementName=AttMotorsCanvas, Path=ActualHeight}" Width="{Binding ElementName=AttMotorsCanvas, Path=ActualWidth}"
-                                     Series="{Binding AttMotorsSeries}" Hoverable="False" DataTooltip="{x:Null}"
-                                            AnimationsSpeed="0:0:0.01" LegendLocation="None" Canvas.Top="5" Zoom="X" PreviewMouseDoubleClick="CartesianChart_PreviewMouseDoubleClick">
-                                <lvc:CartesianChart.AxisX>
-                                    <lvc:Axis FontSize="14" LabelFormatter="{Binding Formatter}"/>
-                                </lvc:CartesianChart.AxisX>
-                                <lvc:CartesianChart.AxisY>
-                                    <lvc:Axis FontSize="14" LabelFormatter="{Binding Formatter}"/>
-                                </lvc:CartesianChart.AxisY>
-                            </lvc:CartesianChart>
-                        </Canvas>
-                    </Grid>
-                </Border>
-            </TabItem>
-        </TabControl>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="{x:Type ListBoxItem}">
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                                            <ContentPresenter />
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </ListBox.ItemContainerStyle>
+                    </ListBox>
+                    <lvc:CartesianChart Height="{Binding ElementName=AttMotorsCanvas, Path=ActualHeight}" Width="{Binding ElementName=AttMotorsCanvas, Path=ActualWidth}"
+                                     Hoverable="False" DataTooltip="{x:Null}" x:Name="AttMotors"
+                                            DisableAnimations="True" LegendLocation="None" Canvas.Top="5" PreviewMouseDoubleClick="CartesianChart_PreviewMouseDoubleClick">
+                        <lvc:CartesianChart.Series>
+                            <lvcG:GLineSeries Title = "Motor FL" LineSmoothness = "0" Fill ="Transparent" Values ="{Binding MotorFLPoints}"  PointGeometry = "{x:Null}"/>
+                            <lvcG:GLineSeries Title = "Motor FR" LineSmoothness = "0" Fill ="Transparent" Values ="{Binding MotorFRPoints}"  PointGeometry = "{x:Null}"/>
+                            <lvcG:GLineSeries Title = "Motor BL" LineSmoothness = "0" Fill ="Transparent" Values ="{Binding MotorBLPoints}"  PointGeometry = "{x:Null}"/>
+                            <lvcG:GLineSeries Title = "Motor BR" LineSmoothness = "0" Fill ="Transparent" Values ="{Binding MotorBRPoints}"  PointGeometry = "{x:Null}"/>
+                        </lvc:CartesianChart.Series>
+                        <lvc:CartesianChart.AxisX>
+                            <lvc:Axis FontSize="14" LabelFormatter="{Binding Formatter}"/>
+                        </lvc:CartesianChart.AxisX>
+                        <lvc:CartesianChart.AxisY>
+                            <lvc:Axis FontSize="14" LabelFormatter="{Binding Formatter}"/>
+                        </lvc:CartesianChart.AxisY>
+                    </lvc:CartesianChart>
+                </Canvas>
+            </Grid>
+        </Border>
     </Grid>
 </UserControl>

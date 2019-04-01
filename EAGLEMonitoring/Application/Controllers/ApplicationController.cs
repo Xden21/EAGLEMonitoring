@@ -2,6 +2,7 @@
 using EAGLEMonitoring.Application.ViewModels;
 using EAGLEMonitoring.Domain;
 using LiveCharts.Configurations;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -18,12 +19,19 @@ namespace EAGLEMonitoring.Application.Controllers
     [Export]
     public class ApplicationController
     {
+        #region NLog
+
+        private static Logger Logger = LogManager.GetCurrentClassLogger();
+
+        #endregion
+
         private readonly ShellViewModel shellViewModel;
         private readonly IDataFetchService dataFetchService;
         private readonly IDataUpdateService dataUpdateService;
         private readonly IGeneralService generalService;
         private readonly ISettingsService settingsService;
         private readonly IShellService shellService;
+        private readonly IGuiUpdateService guiUpdateService;
         private readonly MainMonitoringController mainMonitoringController;
         private readonly NetworkAccessThreadController networkAccessThreadController;
         private readonly StatusBarController statusBarController;
@@ -31,7 +39,6 @@ namespace EAGLEMonitoring.Application.Controllers
         private readonly AltitudeMonitoringController altitudeMonitoringController;
         private readonly NavigationMonitoringController navigationMonitoringController;
 
-        private System.Timers.Timer guiUpdateTimer;
 
         private DelegateCommand ChangeTabCommand;
 
@@ -45,6 +52,7 @@ namespace EAGLEMonitoring.Application.Controllers
             NavigationMonitoringController navigationMonitoringController,
             IDataFetchService dataFetchService,
             IDataUpdateService dataUpdateService,
+            IGuiUpdateService guiUpdateService,
             IGeneralService generalService,
             ISettingsService settingsService,
             IShellService shellService)
@@ -61,12 +69,14 @@ namespace EAGLEMonitoring.Application.Controllers
             this.generalService = generalService;
             this.settingsService = settingsService;
             this.shellService = shellService;
+            this.guiUpdateService = guiUpdateService;
             dataUpdateService.ResetDataEvent += Reset;
             ChangeTabCommand = new DelegateCommand(ChangeTab_Command);
         }
 
         public void Initialize()
         {
+            Logger.Info("Initializing");
             mainMonitoringController.Initialize();
             statusBarController.Initialize();
             attitudeMonitoringController.Initialize();
@@ -78,82 +88,43 @@ namespace EAGLEMonitoring.Application.Controllers
 
         public void Run()
         {
+            Logger.Info("Start");
             shellViewModel.Show();
-            mainMonitoringController.InitializePlots();
-            attitudeMonitoringController.InitializePlots();
-            altitudeMonitoringController.InitializePlots();
-            navigationMonitoringController.InitializePlots();
             ThreadPool.QueueUserWorkItem((info) =>
             {
                 networkAccessThreadController.TryConnect();
             });
-            StartGuiUpdate();
+            guiUpdateService.StartGuiUpdate();
         }
 
         public void Close()
         {
+            Logger.Info("Finishing");
             networkAccessThreadController.Disconnect();
-            StopGuiUpdate();
+            guiUpdateService.StopGuiUpdate();
             dataFetchService.SaveLoggingToDisk();
         }
 
         private void Reset(object sender, EventArgs args)
         {
-            StopGuiUpdate();
+            Logger.Info("Reset GUI");
+            guiUpdateService.StopGuiUpdate();
 
-            mainMonitoringController.InitializePlots();
-            attitudeMonitoringController.InitializePlots();
-            altitudeMonitoringController.InitializePlots();
-            navigationMonitoringController.InitializePlots();
+            //Reset
+            networkAccessThreadController.Disconnect();
+            mainMonitoringController.Reset();
+            altitudeMonitoringController.Reset();
+            attitudeMonitoringController.Reset();
+            navigationMonitoringController.Reset();
 
-            StopGuiUpdate();
-        }
-
-        private void StartGuiUpdate()
-        {
-            guiUpdateTimer = new System.Timers.Timer()
+            ThreadPool.QueueUserWorkItem((info) =>
             {
-                Interval = settingsService.FPS,
-                AutoReset = true
-            };
-            guiUpdateTimer.Elapsed += UpdateData;
-            guiUpdateTimer.Start();
+                networkAccessThreadController.TryConnect();
+            });
+            guiUpdateService.StartGuiUpdate();
         }
 
-        private void StopGuiUpdate()
-        {
-            if (guiUpdateTimer != null)
-            {
-                guiUpdateTimer.Stop();
-                guiUpdateTimer.Dispose();
-                guiUpdateTimer = null;
-            }
-        }
-
-        private void UpdateData(object sender, ElapsedEventArgs args)
-        {
-            if (generalService.Connected)
-            {
-                List<DataSet> newDataSets;
-                lock (dataFetchService.DataLock)
-                {
-                    // Load unprocessed datasets
-                    newDataSets = dataFetchService.UnprocessedDataSets;
-                    dataFetchService.UnprocessedDataSets = new List<DataSet>();
-                }
-                // Add data to backup buffer.
-                if (newDataSets != null && newDataSets.Count != 0)
-                {
-                    dataFetchService.AllDataSets.AddRange(newDataSets);
-
-                    // TODO: More data processing?
-
-                    // Trigger update
-                    dataUpdateService.TriggerDataUpdateEvent(newDataSets);
-                }
-            }
-        }
-
+       
       
         private void SetupCharting()
         {
@@ -161,10 +132,17 @@ namespace EAGLEMonitoring.Application.Controllers
                 .X(value => value.TimeVal)
                 .Y(value => value.Value);
             LiveCharts.Charting.For<LogPoint>(mapper);
+
+            var mapperTracking = Mappers.Xy<PosistionPoint>()
+                .X(value => value.XPosition)
+                .Y(value => value.YPosition);
+            LiveCharts.Charting.For<PosistionPoint>(mapperTracking);
         }
 
         private void ChangeTab_Command(object param)
         {
+            guiUpdateService.StopGuiUpdate();
+            Thread.Sleep(50);
             int tabnum = int.Parse((string)param);
             switch (tabnum)
             {
@@ -199,6 +177,8 @@ namespace EAGLEMonitoring.Application.Controllers
                     shellService.NavVisible = false;
                     break;
             }
+            Thread.Sleep(50);
+            guiUpdateService.StartGuiUpdate();
         }
     }
 }

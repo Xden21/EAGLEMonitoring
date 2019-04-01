@@ -1,5 +1,7 @@
 ﻿using EAGLEMonitoring.Application.Views;
+using EAGLEMonitoring.Domain;
 using LiveCharts;
+using LiveCharts.Geared;
 using LiveCharts.Wpf;
 using System;
 using System.Collections.Generic;
@@ -24,59 +26,180 @@ namespace EAGLEMonitoring.Application.ViewModels
             AttEnable = true;
             AltMode = true;
             NavMode = true;
+
+            rollEstPoints = new GearedValues<LogPoint>().WithQuality(Quality.Medium);
+            rollMeasPoints = new GearedValues<LogPoint>().WithQuality(Quality.Medium);
+            rollRefPoints = new GearedValues<LogPoint>().WithQuality(Quality.Medium);
+
+            pitchEstPoints = new GearedValues<LogPoint>().WithQuality(Quality.Medium);
+            pitchMeasPoints = new GearedValues<LogPoint>().WithQuality(Quality.Medium);
+            pitchRefPoints = new GearedValues<LogPoint>().WithQuality(Quality.Medium);
+
+            yawEstPoints = new GearedValues<LogPoint>().WithQuality(Quality.Medium);
+            yawMeasPoints = new GearedValues<LogPoint>().WithQuality(Quality.Medium);
+            yawRefPoints = new GearedValues<LogPoint>().WithQuality(Quality.Medium);
+
+            heightEstPoints = new GearedValues<LogPoint>().WithQuality(Quality.Medium);
+            heightMeasPoints = new GearedValues<LogPoint>().WithQuality(Quality.Medium);
+            heightRefPoints = new GearedValues<LogPoint>().WithQuality(Quality.Medium);
+
+            navXEstPoints = new GearedValues<LogPoint>().WithQuality(Quality.Medium);
+            navXMeasPoints = new GearedValues<LogPoint>().WithQuality(Quality.Medium);
+            navXRefPoints = new GearedValues<LogPoint>().WithQuality(Quality.Medium);
+
+            navYEstPoints = new GearedValues<LogPoint>().WithQuality(Quality.Medium);
+            navYMeasPoints = new GearedValues<LogPoint>().WithQuality(Quality.Medium);
+            navYRefPoints = new GearedValues<LogPoint>().WithQuality(Quality.Medium);
         }
 
         #endregion
 
         #region Vars & Props
 
-        private SeriesCollection attRollSeries;
+        private GearedValues<LogPoint> rollEstPoints;
 
-        public SeriesCollection AttRollSeries
+        public GearedValues<LogPoint> RollEstPoints
         {
-            get { return attRollSeries; }
-            set { SetProperty(ref attRollSeries, value); }
+            get { return rollEstPoints; }
+            set { SetProperty(ref rollEstPoints, value); }
         }
 
-        private SeriesCollection attPitchSeries;
+        private GearedValues<LogPoint> rollMeasPoints;
 
-        public SeriesCollection AttPitchSeries
+        public GearedValues<LogPoint> RollMeasPoints
         {
-            get { return attPitchSeries; }
-            set { SetProperty(ref attPitchSeries, value); }
+            get { return rollMeasPoints; }
+            set { SetProperty(ref rollMeasPoints, value); }
         }
 
-        private SeriesCollection attYawSeries;
+        private GearedValues<LogPoint> rollRefPoints;
 
-        public SeriesCollection AttYawSeries
+        public GearedValues<LogPoint> RollRefPoints
         {
-            get { return attYawSeries; }
-            set { SetProperty(ref attYawSeries, value); }
+            get { return rollRefPoints; }
+            set { SetProperty(ref rollRefPoints, value); }
         }
 
-        private SeriesCollection altSeries;
+        private GearedValues<LogPoint> pitchEstPoints;
 
-        public SeriesCollection AltSeries
+        public GearedValues<LogPoint> PitchEstPoints
         {
-            get { return altSeries; }
-            set { SetProperty(ref altSeries, value); }
+            get { return pitchEstPoints; }
+            set { SetProperty(ref pitchEstPoints, value); }
         }
 
-        private SeriesCollection navXSeries;
+        private GearedValues<LogPoint> pitchMeasPoints;
 
-        public SeriesCollection NavXSeries
+        public GearedValues<LogPoint> PitchMeasPoints
         {
-            get { return navXSeries; }
-            set { SetProperty(ref navXSeries, value); }
+            get { return pitchMeasPoints; }
+            set { SetProperty(ref pitchMeasPoints, value); }
         }
 
-        private SeriesCollection navYSeries;
+        private GearedValues<LogPoint> pitchRefPoints;
 
-        public SeriesCollection NavYSeries
+        public GearedValues<LogPoint> PitchRefPoints
         {
-            get { return navYSeries; }
-            set { SetProperty(ref navYSeries, value); }
+            get { return pitchRefPoints; }
+            set { SetProperty(ref pitchRefPoints, value); }
         }
+
+        private GearedValues<LogPoint> yawEstPoints;
+
+        public GearedValues<LogPoint> YawEstPoints
+        {
+            get { return yawEstPoints; }
+            set { SetProperty(ref yawEstPoints, value); }
+        }
+
+        private GearedValues<LogPoint> yawMeasPoints;
+
+        public GearedValues<LogPoint> YawMeasPoints
+        {
+            get { return yawMeasPoints; }
+            set { SetProperty(ref yawMeasPoints, value); }
+        }
+
+        private GearedValues<LogPoint> yawRefPoints;
+
+        public GearedValues<LogPoint> YawRefPoints
+        {
+            get { return yawRefPoints; }
+            set { SetProperty(ref yawRefPoints, value); }
+        }
+
+        private GearedValues<LogPoint> heightEstPoints;
+
+        public GearedValues<LogPoint> HeightEstPoints
+        {
+            get { return heightEstPoints; }
+            set { SetProperty(ref heightEstPoints, value); }
+        }
+
+        private GearedValues<LogPoint> heightMeasPoints;
+
+        public GearedValues<LogPoint> HeightMeasPoints
+        {
+            get { return heightMeasPoints; }
+            set { SetProperty(ref heightMeasPoints, value); }
+        }
+
+        private GearedValues<LogPoint> heightRefPoints;
+
+        public GearedValues<LogPoint> HeightRefPoints
+        {
+            get { return heightRefPoints; }
+            set { SetProperty(ref heightRefPoints, value); }
+        }
+
+        private GearedValues<LogPoint> navXEstPoints;
+
+        public GearedValues<LogPoint> NavXEstPoints
+        {
+            get { return navXEstPoints; }
+            set { SetProperty(ref navXEstPoints, value); }
+        }
+
+        private GearedValues<LogPoint> navXMeasPoints;
+
+        public GearedValues<LogPoint> NavXMeasPoints
+        {
+            get { return navXMeasPoints; }
+            set { SetProperty(ref navXMeasPoints, value); }
+        }
+
+        private GearedValues<LogPoint> navXRefPoints;
+
+        public GearedValues<LogPoint> NavXRefPoints
+        {
+            get { return navXRefPoints; }
+            set { SetProperty(ref navXRefPoints, value); }
+        }
+
+        private GearedValues<LogPoint> navYEstPoints;
+
+        public GearedValues<LogPoint> NavYEstPoints
+        {
+            get { return navYEstPoints; }
+            set { SetProperty(ref navYEstPoints, value); }
+        }
+
+        private GearedValues<LogPoint> navYMeasPoints;
+
+        public GearedValues<LogPoint> NavYMeasPoints
+        {
+            get { return navYMeasPoints; }
+            set { SetProperty(ref navYMeasPoints, value); }
+        }
+
+        private GearedValues<LogPoint> navYRefPoints;
+
+        public GearedValues<LogPoint> NavYRefPoints
+        {
+            get { return navYRefPoints; }
+            set { SetProperty(ref navYRefPoints, value); }
+        }
+
 
         private bool altMode;
 
@@ -126,14 +249,6 @@ namespace EAGLEMonitoring.Application.ViewModels
             set { SetProperty(ref selectedSeries, value); }
         }
 
-        private ICommand chartUpdated;
-
-        public ICommand ChartUpdated
-        {
-            get { return chartUpdated; }
-            set { SetProperty(ref chartUpdated, value); }
-        }
-
         private bool attEnable;
 
         public bool AttEnable
@@ -141,6 +256,23 @@ namespace EAGLEMonitoring.Application.ViewModels
             get { return attEnable; }
             set { SetProperty(ref attEnable, value); }
         }
+
+        private float minValue;
+
+        public float MinValue
+        {
+            get { return minValue; }
+            set { SetProperty(ref minValue, value); }
+        }
+
+        private float maxValue;
+
+        public float MaxValue
+        {
+            get { return maxValue; }
+            set { SetProperty(ref maxValue, value); }
+        }
+
 
         public Func<double, string> Formatter { get; set; }
 

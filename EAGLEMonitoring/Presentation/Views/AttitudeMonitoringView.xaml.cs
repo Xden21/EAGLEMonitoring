@@ -1,4 +1,5 @@
 ﻿using EAGLEMonitoring.Application.Views;
+using LiveCharts.Geared;
 using LiveCharts.Wpf;
 using System;
 using System.Collections.Generic;
@@ -35,7 +36,7 @@ namespace EAGLEMonitoring.Presentation.Views
             var item = ItemsControl.ContainerFromElement((ListBox)sender, (DependencyObject)e.OriginalSource) as ListBoxItem;
             if (item == null) return;
 
-            var series = (LineSeries)item.Content;
+            var series = (GLineSeries)item.Content;
             series.Visibility = series.Visibility == Visibility.Visible
                 ? Visibility.Hidden
                 : Visibility.Visible;

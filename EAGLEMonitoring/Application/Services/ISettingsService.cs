@@ -12,7 +12,9 @@ namespace EAGLEMonitoring.Application.Services
         int Port { get; set; }
         int DataAmount { get; set; }
         float TimeFrame { get; set; }
+        float BigPlotTimeFrame { get; set; }
         int FPS { get; set; }
         string SaveFolder { get; set; }        
+        float TrackingTimeFrame { get; set; }
     }
 }

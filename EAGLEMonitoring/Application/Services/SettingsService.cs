@@ -42,6 +42,15 @@ namespace EAGLEMonitoring.Application.Services
             set { timeFrame = value; }
         }
 
+        private float bigPlotTimeFrame;
+
+        public float BigPlotTimeFrame
+        {
+            get { return bigPlotTimeFrame; }
+            set { bigPlotTimeFrame = value; }
+        }
+
+
         private int fps;
 
         public int FPS
@@ -49,6 +58,15 @@ namespace EAGLEMonitoring.Application.Services
             get { return fps; }
             set { fps = value; }
         }
+
+        private float trackingTimeFrame;
+
+        public float TrackingTimeFrame
+        {
+            get { return trackingTimeFrame; }
+            set { trackingTimeFrame = value; }
+        }
+
 
         private string saveFolder;
 
@@ -73,6 +91,8 @@ namespace EAGLEMonitoring.Application.Services
             TimeFrame = Properties.Settings.Default.TimeFrame;
             fps = Properties.Settings.Default.FPS;
             saveFolder = Properties.Settings.Default.LogSaveFolder;
+            bigPlotTimeFrame = Properties.Settings.Default.BigPlotTimeFrame;
+            trackingTimeFrame = Properties.Settings.Default.TrackingTimeFrame;
         }
     }
 }

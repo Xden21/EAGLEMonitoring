@@ -61,7 +61,7 @@ namespace EAGLEMonitoring.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("60")]
+        [global::System.Configuration.DefaultSettingValueAttribute("30")]
         public int FPS {
             get {
                 return ((int)(this["FPS"]));
@@ -74,6 +74,24 @@ namespace EAGLEMonitoring.Properties {
         public string LogSaveFolder {
             get {
                 return ((string)(this["LogSaveFolder"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("120")]
+        public float BigPlotTimeFrame {
+            get {
+                return ((float)(this["BigPlotTimeFrame"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("2")]
+        public float TrackingTimeFrame {
+            get {
+                return ((float)(this["TrackingTimeFrame"]));
             }
         }
     }

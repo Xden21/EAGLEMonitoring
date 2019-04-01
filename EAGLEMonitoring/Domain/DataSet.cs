@@ -139,9 +139,9 @@ namespace EAGLEMonitoring.Domain
 
         public override string ToString()
         {
-            return FlightMode.ToString() + ";" + TimeStamp.ToString() + ";" + AngleEstimate.ToString() + AngleMeasured.ToString() + AngleReference.ToString() + AngularVelocity.ToString() +
+            return FlightMode.ToString() + ";" + TimeStamp.ToString() + ";" + AngleEstimate.ToString() + AngleMeasured.ToString() + AngleReference.ToString() + AngularVelocity.ToString() + MotorSpeeds.ToString() + 
                 HeightEstimate.ToString() + ";" + HeightMeasured.ToString() + ";" + HeightReference.ToString() + ";"
-                + PositionEstimate.ToString() + ";" + PositionMeasured.ToString() + ";"+ PositionReference.ToString() + ";" + VelocitySet.ToString() + "\n";
+                + PositionEstimate.ToString() + PositionMeasured.ToString() +  PositionReference.ToString() + VelocitySet.ToString() + "\n";
         }
     }
 }

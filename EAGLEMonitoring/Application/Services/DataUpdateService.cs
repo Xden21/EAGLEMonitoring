@@ -2,19 +2,22 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EAGLEMonitoring.Application.Services
 {
     [Export(typeof(IDataUpdateService))]
-    public class DataUpdateService: IDataUpdateService
+    public class DataUpdateService : IDataUpdateService
     {
-        [ImportingConstructor]
-        public DataUpdateService()
-        {
+        private readonly ISettingsService settingsService;
+        private readonly IGeneralService generalService;
 
+
+        [ImportingConstructor]
+        public DataUpdateService(ISettingsService settingsService,
+            IGeneralService generalService)
+        {
+            this.settingsService = settingsService;
+            this.generalService = generalService;
         }
 
         public event EventHandler<DataUpdateEventArgs> DataUpdateEvent;
@@ -29,15 +32,18 @@ namespace EAGLEMonitoring.Application.Services
         {
             ResetDataEvent?.Invoke(this, EventArgs.Empty);
         }
+
+
+    }
+}
+
+public class DataUpdateEventArgs : EventArgs
+{
+    public DataUpdateEventArgs(List<DataSet> dataSets)
+    {
+        DataSets = dataSets;
     }
 
-        public class DataUpdateEventArgs : EventArgs
-        {
-            public DataUpdateEventArgs(List<DataSet> dataSets)
-            {
-                DataSets = dataSets;
-            }
-
-            public List<DataSet> DataSets { get; set; }
-        }
-    }
+    public List<DataSet> DataSets { get; set; }
+}
+    

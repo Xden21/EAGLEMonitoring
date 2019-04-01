@@ -6,16 +6,13 @@
              xmlns:conv="clr-namespace:EAGLEMonitoring.Presentation.Resources.Converters"
              xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
              xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+             xmlns:lvcG="clr-namespace:LiveCharts.Geared;assembly=LiveCharts.Geared"
              mc:Ignorable="d" 
              d:DesignHeight="950" d:DesignWidth="1920">
     <UserControl.Resources>
         <conv:OpacityConverter x:Key="OpacityConverter"/>
     </UserControl.Resources>
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="231*"/>
-            <RowDefinition Height="719*"/>
-        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
@@ -23,7 +20,7 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <StackPanel Orientation="Vertical" Grid.Column="0" Grid.RowSpan="2">
+        <StackPanel Orientation="Vertical" Grid.Column="0">
             <GroupBox Header="Overrides" Margin="3">
                 <StackPanel Orientation="Vertical" Margin="5">
                     <CheckBox Content="Override Altitude Enable" IsChecked="{Binding AltOverride}" Margin="5"/>
@@ -33,7 +30,7 @@
             <GroupBox Header="Tuning"></GroupBox>
         </StackPanel>
 
-        <Grid Grid.Column="1" Grid.RowSpan="2">
+        <Grid Grid.Column="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
@@ -46,8 +43,8 @@
                     </Grid.RowDefinitions>
                     <TextBlock Grid.Row="0" FontSize="40" Foreground="#404040" Margin="20, 10">Attitude: Roll</TextBlock>
                     <Canvas Grid.Row="1" Name="AttRollCanvas" Margin="3, 3, 3, 20">
-                        <ListBox ItemsSource="{Binding AttRollSeries}" 
-                             Panel.ZIndex="1" Canvas.Left="60" Canvas.Top="20" BorderThickness="0" Background="Transparent" PreviewMouseDown="ListBox_PreviewMouseDown">
+                        <ListBox 
+                              Panel.ZIndex="1" Canvas.Left="60" Canvas.Top="20" BorderThickness="0" Background="Transparent" PreviewMouseDown="ListBox_PreviewMouseDown" ItemsSource="{Binding Series, ElementName=AttRoll}">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <TextBlock Text="{Binding (lvc:LineSeries.Title)}" 
@@ -70,13 +67,22 @@
                             </ListBox.ItemContainerStyle>
                         </ListBox>
                         <lvc:CartesianChart Height="{Binding ElementName=AttRollCanvas, Path=ActualHeight}" Width="{Binding ElementName=AttRollCanvas, Path=ActualWidth}"
-                                     Series="{Binding AttRollSeries}" Hoverable="False" DataTooltip="{x:Null}"
+                                     Hoverable="False" DataTooltip="{x:Null}" x:Name="AttRoll"
                                             DisableAnimations="True" LegendLocation="None" IsEnabled="{Binding AttEnable}">
+                            <lvc:CartesianChart.Series>
+                                <lvcG:GLineSeries Title = "Roll Estimate" LineSmoothness = "0" Fill ="Transparent" Values ="{Binding RollEstPoints}"  PointGeometry = "{x:Null}"/>
+                                <lvcG:GLineSeries Title = "Roll Measured" LineSmoothness = "0" Fill ="Transparent" Values ="{Binding RollMeasPoints}"  PointGeometry = "{x:Null}"/>
+                                <lvcG:GLineSeries Title = "Roll Reference" LineSmoothness = "0" Fill ="Transparent" Values ="{Binding RollRefPoints}"  PointGeometry = "{x:Null}"/>
+                            </lvc:CartesianChart.Series>
                             <lvc:CartesianChart.AxisX>
                                 <lvc:Axis FontSize="14" ShowLabels="False"/>
                             </lvc:CartesianChart.AxisX>
                             <lvc:CartesianChart.AxisY>
-                                <lvc:Axis FontSize="14" LabelFormatter="{Binding Formatter}" MinValue="-25" MaxValue="25"/>
+                                <lvc:Axis FontSize="14" LabelFormatter="{Binding Formatter}" MinValue="-25" MaxValue="25">
+                                    <lvc:Axis.Separator>
+                                        <lvc:Separator Step="5"/>
+                                    </lvc:Axis.Separator>
+                                </lvc:Axis>
                             </lvc:CartesianChart.AxisY>
                         </lvc:CartesianChart>
                     </Canvas>
@@ -90,7 +96,7 @@
                     </Grid.RowDefinitions>
                     <TextBlock Grid.Row="0" FontSize="40" Foreground="#404040" Margin="20, 10">Attitude: Pitch</TextBlock>
                     <Canvas Grid.Row="1" Name="AttPitchCanvas" Margin="3, 3, 3, 20">
-                        <ListBox ItemsSource="{Binding AttPitchSeries}" 
+                        <ListBox ItemsSource="{Binding Series, ElementName=AttPitch}" 
                              Panel.ZIndex="1" Canvas.Left="60" Canvas.Top="20" BorderThickness="0" Background="Transparent"  PreviewMouseDown="ListBox_PreviewMouseDown">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
@@ -115,13 +121,22 @@
                         </ListBox>
 
                         <lvc:CartesianChart Height="{Binding ElementName=AttPitchCanvas, Path=ActualHeight}" Width="{Binding ElementName=AttPitchCanvas, Path=ActualWidth}"
-                                     Series="{Binding Path=AttPitchSeries}" Hoverable="False" DataTooltip="{x:Null}" DisableAnimations="True" IsEnabled="{Binding AttEnable}">
+                                     Hoverable="False" DataTooltip="{x:Null}" DisableAnimations="True" IsEnabled="{Binding AttEnable}" x:Name="AttPitch">
+                            <lvc:CartesianChart.Series>
+                                <lvcG:GLineSeries Title = "Pitch Estimate" LineSmoothness = "0" Fill ="Transparent" Values ="{Binding PitchEstPoints}"  PointGeometry = "{x:Null}"/>
+                                <lvcG:GLineSeries Title = "Pitch Measured" LineSmoothness = "0" Fill ="Transparent" Values ="{Binding PitchMeasPoints}"  PointGeometry = "{x:Null}"/>
+                                <lvcG:GLineSeries Title = "Pitch Reference" LineSmoothness = "0" Fill ="Transparent" Values ="{Binding PitchRefPoints}"  PointGeometry = "{x:Null}"/>
+                            </lvc:CartesianChart.Series>
                             <lvc:CartesianChart.AxisX>
                                 <lvc:Axis FontSize="14" ShowLabels="False">                                    
                                 </lvc:Axis>
                             </lvc:CartesianChart.AxisX>
                             <lvc:CartesianChart.AxisY>
-                                <lvc:Axis FontSize="14" LabelFormatter="{Binding Formatter}"/>
+                                <lvc:Axis FontSize="14" LabelFormatter="{Binding Formatter}" MinValue="-25" MaxValue="25">
+                                    <lvc:Axis.Separator>
+                                        <lvc:Separator Step="5"/>
+                                    </lvc:Axis.Separator>
+                                </lvc:Axis>
                             </lvc:CartesianChart.AxisY>
 
                         </lvc:CartesianChart>
@@ -129,7 +144,7 @@
                 </Grid>
             </Border>
         </Grid>
-        <Grid Grid.Column="2" Grid.RowSpan="2">
+        <Grid Grid.Column="2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
@@ -142,7 +157,7 @@
                     </Grid.RowDefinitions>
                     <TextBlock Grid.Row="0" FontSize="40" Foreground="#404040" Margin="20, 10">Attitude: Yaw</TextBlock>
                     <Canvas Grid.Row="1" Name="AttYawCanvas" Margin="3, 3, 3, 20">
-                        <ListBox ItemsSource="{Binding AttYawSeries}" 
+                        <ListBox ItemsSource="{Binding Series, ElementName=AttYaw}" 
                              Panel.ZIndex="1" Canvas.Left="60" Canvas.Top="20" BorderThickness="0" Background="Transparent"  PreviewMouseDown="ListBox_PreviewMouseDown">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
@@ -167,13 +182,22 @@
                         </ListBox>
 
                         <lvc:CartesianChart Height="{Binding ElementName=AttYawCanvas, Path=ActualHeight}" Width="{Binding ElementName=AttYawCanvas, Path=ActualWidth}"
-                                     Series="{Binding AttYawSeries}" Hoverable="False" DataTooltip="{x:Null}" DisableAnimations="True" IsEnabled="{Binding AttEnable}">
+                                      Hoverable="False" DataTooltip="{x:Null}" DisableAnimations="True" IsEnabled="{Binding AttEnable}" x:Name="AttYaw">
+                            <lvc:CartesianChart.Series>
+                                <lvcG:GLineSeries Title = "Yaw Estimate" LineSmoothness = "0" Fill ="Transparent" Values ="{Binding YawEstPoints}"  PointGeometry = "{x:Null}"/>
+                                <lvcG:GLineSeries Title = "Yaw Measured" LineSmoothness = "0" Fill ="Transparent" Values ="{Binding YawMeasPoints}"  PointGeometry = "{x:Null}"/>
+                                <lvcG:GLineSeries Title = "Yaw Reference" LineSmoothness = "0" Fill ="Transparent" Values ="{Binding YawRefPoints}"  PointGeometry = "{x:Null}"/>
+                            </lvc:CartesianChart.Series>
                             <lvc:CartesianChart.AxisX>
                                 <lvc:Axis FontSize="14" ShowLabels="False">                                    
                                 </lvc:Axis>
                             </lvc:CartesianChart.AxisX>
                             <lvc:CartesianChart.AxisY>
-                                <lvc:Axis FontSize="14" LabelFormatter="{Binding Formatter}"/>
+                                <lvc:Axis FontSize="14" LabelFormatter="{Binding Formatter}" MinValue="-45" MaxValue="45">
+                                    <lvc:Axis.Separator>
+                                        <lvc:Separator Step="5"/>
+                                    </lvc:Axis.Separator>
+                                </lvc:Axis>
                             </lvc:CartesianChart.AxisY>
                         </lvc:CartesianChart>
                     </Canvas>
@@ -187,7 +211,7 @@
                     </Grid.RowDefinitions>
                     <TextBlock Grid.Row="0" FontSize="40" Foreground="#404040" Margin="20, 10">Altitude</TextBlock>
                     <Canvas Grid.Row="1" Name="AltCanvas" Margin="3, 3, 3, 20">
-                        <ListBox ItemsSource="{Binding AltSeries}" 
+                        <ListBox ItemsSource="{Binding Series, ElementName=Alt}" 
                              Panel.ZIndex="1" Canvas.Left="60" Canvas.Top="20" BorderThickness="0" Background="Transparent"  PreviewMouseDown="ListBox_PreviewMouseDown">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
@@ -212,7 +236,12 @@
                         </ListBox>
 
                         <lvc:CartesianChart Height="{Binding ElementName=AltCanvas, Path=ActualHeight}" Width="{Binding ElementName=AltCanvas, Path=ActualWidth}"
-                                     Series="{Binding AltSeries}" Hoverable="False" DataTooltip="{x:Null}" DisableAnimations="True" IsEnabled="{Binding AltMode}">
+                                     Hoverable="False" DataTooltip="{x:Null}" DisableAnimations="True" IsEnabled="{Binding AltMode}" x:Name="Alt">
+                            <lvc:CartesianChart.Series>
+                                <lvcG:GLineSeries Title = "Height Estimate" LineSmoothness = "0" Fill ="Transparent" Values ="{Binding HeightEstPoints}"  PointGeometry = "{x:Null}"/>
+                                <lvcG:GLineSeries Title = "Height Measured" LineSmoothness = "0" Fill ="Transparent" Values ="{Binding HeightMeasPoints}"  PointGeometry = "{x:Null}" />
+                                <lvcG:GLineSeries Title = "Height Reference" LineSmoothness = "0" Fill ="Transparent" Values ="{Binding HeightRefPoints}"  PointGeometry = "{x:Null}"/>
+                            </lvc:CartesianChart.Series>
                             <lvc:CartesianChart.AxisX>
                                 <lvc:Axis FontSize="14" ShowLabels="False">                                   
                                 </lvc:Axis>
@@ -225,7 +254,7 @@
                 </Grid>
             </Border>
         </Grid>
-        <Grid Grid.Column="3" Grid.RowSpan="2">
+        <Grid Grid.Column="3">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
@@ -238,7 +267,7 @@
                     </Grid.RowDefinitions>
                     <TextBlock Grid.Row="0" FontSize="40" Foreground="#404040" Margin="20, 10">Navigation: X-axis</TextBlock>
                     <Canvas Grid.Row="1" Name="NavXCanvas" Margin="3, 3, 3, 20">
-                        <ListBox ItemsSource="{Binding NavXSeries}" 
+                        <ListBox ItemsSource="{Binding Series, ElementName=NavX}" 
                              Panel.ZIndex="1" Canvas.Left="60" Canvas.Top="20" BorderThickness="0" Background="Transparent"  PreviewMouseDown="ListBox_PreviewMouseDown">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
@@ -263,7 +292,12 @@
                         </ListBox>
 
                         <lvc:CartesianChart Height="{Binding ElementName=NavXCanvas, Path=ActualHeight}" Width="{Binding ElementName=NavXCanvas, Path=ActualWidth}"
-                                     Series="{Binding NavXSeries}" Hoverable="False" DataTooltip="{x:Null}" DisableAnimations="True" IsEnabled="{Binding NavMode}">
+                                     Hoverable="False" DataTooltip="{x:Null}" DisableAnimations="True" IsEnabled="{Binding NavMode}" x:Name="NavX">
+                            <lvc:CartesianChart.Series>
+                                <lvcG:GLineSeries Title = "X-Coör Estimate" LineSmoothness = "0" Fill ="Transparent" Values ="{Binding NavXEstPoints}"  PointGeometry = "{x:Null}"/>
+                                <lvcG:GLineSeries Title = "X-Coör Measured" LineSmoothness = "0" Fill ="Transparent" Values ="{Binding NavXMeasPoints}"  PointGeometry = "{x:Null}"/>
+                                <lvcG:GLineSeries Title = "X-Coör Reference" LineSmoothness = "0" Fill ="Transparent" Values ="{Binding NavXRefPoints}"  PointGeometry = "{x:Null}"/>
+                            </lvc:CartesianChart.Series>
                             <lvc:CartesianChart.AxisX>
                                 <lvc:Axis FontSize="14" ShowLabels="False">                                    
                                 </lvc:Axis>
@@ -283,7 +317,7 @@
                     </Grid.RowDefinitions>
                     <TextBlock Grid.Row="0" FontSize="40" Foreground="#404040" Margin="20, 10">Navigation: Y-axis</TextBlock>
                     <Canvas Grid.Row="1" Name="NavYCanvas" Margin="3, 3, 3, 20">
-                        <ListBox ItemsSource="{Binding NavYSeries}" 
+                        <ListBox ItemsSource="{Binding Series, ElementName=NavY}" 
                              Panel.ZIndex="1" Canvas.Left="60" Canvas.Top="20" BorderThickness="0" Background="Transparent" PreviewMouseDown="ListBox_PreviewMouseDown">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
@@ -308,8 +342,12 @@
                         </ListBox>
 
                         <lvc:CartesianChart Height="{Binding ElementName=NavYCanvas, Path=ActualHeight}" Width="{Binding ElementName=NavYCanvas, Path=ActualWidth}"
-                                     Series="{Binding NavYSeries}" Hoverable="False" DataTooltip="{x:Null}" DisableAnimations="True" IsEnabled="{Binding NavMode}"
-                                            UpdaterTickCommand="{Binding ChartUpdated}">
+                                     Hoverable="False" DataTooltip="{x:Null}" DisableAnimations="True" IsEnabled="{Binding NavMode}" x:Name="NavY">
+                            <lvc:CartesianChart.Series>
+                                <lvcG:GLineSeries Title = "Y-Coör Estimate" LineSmoothness = "0" Fill ="Transparent" Values ="{Binding NavYEstPoints}"  PointGeometry = "{x:Null}"/>
+                                <lvcG:GLineSeries Title = "Y-Coör Measured" LineSmoothness = "0" Fill ="Transparent" Values ="{Binding NavYMeasPoints}"  PointGeometry = "{x:Null}"/>
+                                <lvcG:GLineSeries Title = "Y-Coör Reference" LineSmoothness = "0" Fill ="Transparent" Values ="{Binding NavYRefPoints}"  PointGeometry = "{x:Null}"/>
+                            </lvc:CartesianChart.Series>
                             <lvc:CartesianChart.AxisX>
                                 <lvc:Axis FontSize="14" ShowLabels="False">                                    
                                 </lvc:Axis>
